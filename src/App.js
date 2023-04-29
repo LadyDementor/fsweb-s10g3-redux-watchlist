@@ -5,12 +5,31 @@ import FavMovie from "./components/FavMovie";
 import { createStore, applyMiddleware } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 
+import {
+  REMOVE_FAV,
+  ADD_FAVORITES,
+  SONRAKI_FILM,
+  ONCEKI_FILM,
+} from "./actions/action";
+
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import movies from "./movies";
+
 function App() {
-  const [sira, setSira] = useState(0);
-  const favMovies = [];
+  const dispatch = useDispatch();
+
+  const favMovies = useSelector((store) => store.favorites);
+  const sira = useSelector((store) => store.sira);
 
   function sonrakiFilm() {
-    setSira(sira + 1);
+    dispatch({ type: SONRAKI_FILM });
+  }
+  function oncekiFilm() {
+    dispatch({ type: ONCEKI_FILM });
+  }
+  function favoriyeEkle() {
+    dispatch({ type: ADD_FAVORITES, payload: sira });
   }
 
   return (
@@ -37,13 +56,26 @@ function App() {
           <Movie sira={sira} />
 
           <div className="flex gap-3 justify-end py-3">
+            {sira > 0 && (
+              <button
+                onClick={oncekiFilm}
+                className="select-none px-4 py-2 border border-blue-700 text-blue-700 hover:border-blue-500 hover:text-blue-500"
+              >
+                önceki
+              </button>
+            )}
+            {sira + 1 < sira.length && (
+              <button
+                onClick={sonrakiFilm}
+                className="select-none px-4 py-2 border border-blue-700 text-blue-700 hover:border-blue-500 hover:text-blue-500"
+              >
+                Sıradaki
+              </button>
+            )}
             <button
-              onClick={sonrakiFilm}
-              className="select-none px-4 py-2 border border-blue-700 text-blue-700 hover:border-blue-500 hover:text-blue-500"
+              onClick={() => favoriyeEkle()}
+              className="select-none px-4 py-2 bg-blue-700 hover:bg-blue-600 text-white"
             >
-              Sıradaki
-            </button>
-            <button className="select-none px-4 py-2 bg-blue-700 hover:bg-blue-600 text-white">
               Listeme ekle
             </button>
           </div>
@@ -52,7 +84,7 @@ function App() {
         <Route path="/listem">
           <div>
             {favMovies.map((movie) => (
-              <FavMovie key={movie.id} title={movie.title} id={movie.id} />
+              <FavMovie key={movie.id} title={movie.title} />
             ))}
           </div>
         </Route>
