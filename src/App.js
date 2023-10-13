@@ -2,36 +2,17 @@ import { useState } from "react";
 import { Switch, Route, NavLink } from "react-router-dom";
 import Movie from "./components/Movie";
 import FavMovie from "./components/FavMovie";
-import { createStore, applyMiddleware } from "redux";
-import { composeWithDevTools } from "redux-devtools-extension";
-
-import {
-  REMOVE_FAV,
-  ADD_FAVORITES,
-  SONRAKI_FILM,
-  ONCEKI_FILM,
-} from "./actions/action";
-
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
-import movies from "./movies";
-
+import { useDispatch, useSelector } from "react-redux";
+import { listeme_ekle } from "./actions";
+import { movies } from "./movies";
 function App() {
+  const [sira, setSira] = useState(0);
   const dispatch = useDispatch();
-
-  const favMovies = useSelector((store) => store.favorites);
-  const sira = useSelector((store) => store.sira);
+  const favMovies = useSelector((store) => store.favMovies);
 
   function sonrakiFilm() {
-    dispatch({ type: SONRAKI_FILM });
+    setSira(sira + 1);
   }
-  function oncekiFilm() {
-    dispatch({ type: ONCEKI_FILM });
-  }
-  function favoriyeEkle() {
-    dispatch({ type: ADD_FAVORITES, payload: sira });
-  }
-
   return (
     <div className="wrapper max-w-2xl mx-auto">
       <nav className="flex text-2xl pb-6 pt-8 gap-2 justify-center">
@@ -56,24 +37,16 @@ function App() {
           <Movie sira={sira} />
 
           <div className="flex gap-3 justify-end py-3">
-            {sira > 0 && (
-              <button
-                onClick={oncekiFilm}
-                className="select-none px-4 py-2 border border-blue-700 text-blue-700 hover:border-blue-500 hover:text-blue-500"
-              >
-                önceki
-              </button>
-            )}
-            {sira + 1 < sira.length && (
-              <button
-                onClick={sonrakiFilm}
-                className="select-none px-4 py-2 border border-blue-700 text-blue-700 hover:border-blue-500 hover:text-blue-500"
-              >
-                Sıradaki
-              </button>
-            )}
             <button
-              onClick={() => favoriyeEkle()}
+              onClick={sonrakiFilm}
+              className="select-none px-4 py-2 border border-blue-700 text-blue-700 hover:border-blue-500 hover:text-blue-500"
+            >
+              Sıradaki
+            </button>
+            <button
+              onClick={() => {
+                dispatch(listeme_ekle(movies[sira]));
+              }}
               className="select-none px-4 py-2 bg-blue-700 hover:bg-blue-600 text-white"
             >
               Listeme ekle
@@ -84,7 +57,7 @@ function App() {
         <Route path="/listem">
           <div>
             {favMovies.map((movie) => (
-              <FavMovie key={movie.id} title={movie.title} />
+              <FavMovie key={movie.id} title={movie.title} id={movie.id} />
             ))}
           </div>
         </Route>

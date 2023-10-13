@@ -4,24 +4,24 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
-import reducer from "./reducers/reducer";
+import { applyMiddleware } from "redux";
+import { legacy_createStore as createStore } from "redux";
 import { BrowserRouter } from "react-router-dom";
-import logger from "redux-logger";
-import { legacy_createStore as createStore, applyMiddleware } from "redux";
-import { composeWithDevTools } from "@redux-devtools/extension";
+import { createLogger } from "redux-logger";
+import { reducer } from "./reducer";
 
-const store0223 = createStore(
-  reducer,
-  composeWithDevTools(applyMiddleware(logger))
-);
-
+const logger = createLogger({
+  diff: true,
+  collapsed: true,
+});
 const root = ReactDOM.createRoot(document.getElementById("root"));
+const store = createStore(reducer, applyMiddleware(logger));
 root.render(
-  <Provider store={store0223}>
-    <BrowserRouter>
+  <BrowserRouter>
+    <Provider store={store}>
       <App />
-    </BrowserRouter>
-  </Provider>
+    </Provider>
+  </BrowserRouter>
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -1,4 +1,4 @@
-import { movies } from "./../movies";
+import { movies } from "../movies";
 
 export default function Movie(props) {
   const movie = movies[props.sira];
